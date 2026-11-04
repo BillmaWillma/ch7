@@ -1,3 +1,13 @@
+//For msft_2000_2010.txt, the highest price comes before the lowest price. What does that mean for someone who bought Microsoft stock in 2000?
+
+
+
+
+//Look up what happened in the world around the lowest month for sbux_2007_2016.txt and sp500_1925_1945.txt. Does the timing make sense?
+
+
+
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
@@ -14,6 +24,8 @@ public class StockTrader {
 
         loadData(in, years, months, prices);
         printData(years, months, prices);
+        System.out.println("Lowest: $"+prices[indexOfLowest(prices)]+" in "+monthName(months[indexOfLowest(prices)])+" "+years[indexOfLowest(prices)]);
+        System.out.println("Highest: $"+prices[indexOfHighest(prices)]+" in "+monthName(months[indexOfHighest(prices)])+" "+years[indexOfHighest(prices)]);
     }
 
     public static void loadData(Scanner in, int[] years, int[] months, double[] prices) {
@@ -40,14 +52,43 @@ public class StockTrader {
 
     public static int indexOfLowest(double[] prices) {
         double a = 0;
-        int b = 0;
+        double b = 999999999;
+        int c = 0;
+        double d = 0;
         for (int i = 0; i < prices.length - 1; i++) {
-            a = Math.min(prices[i], prices[i + 1]);
+            a = prices[i];
+            d = prices[i+1];
+            if(Math.min(a, d)<Math.min(b, a)){
+				b = Math.min(a, d);
+				if(a<d){
+					c = i;
+				} else if (d<a){
+					c = i+1;
+				}
+			}
         }
-        return (int) a;
+        return c;
     }
 
     public static int indexOfHighest(double[] prices) {
-        return 1;
+        double a = 0;
+        double b = 0;
+        int c = 0;
+        double d = 0;
+        for (int i = 0; i < prices.length - 1; i++) {
+            a = prices[i];
+            d = prices[i+1];
+            if(Math.max(a, prices[i+1])>Math.max(b, a)){
+				b = Math.max(a, prices[i+1]);
+				if (a>d){
+					c=i;
+				} else if (d>a){
+					c=i+1;
+				}
+			}
+        }
+        return c;
     }
+    
+    
 }
