@@ -1,32 +1,51 @@
-// P2Q1
-//For msft_2000_2010.txt, the highest price comes before the lowest price. What does that
+// Part 2 Q1
+// For msft_2000_2010.txt, the highest price comes before the lowest price. What does that
 // mean for
 //  someone who bought Microsoft stock in 2000?
 
-// P2A1
-//It is very possible for someone to purchase a share of Microsoft in 2000 and lose money
+// Part 2 A1
+// It is very possible for someone to purchase a share of Microsoft in 2000 and lose money
 // because the same share of Microft depreciated in value over time.
 
-// P2Q2.
+// Part 2 Q2.
 // Look up what happened in the world around the lowest month for sbux_2007_2016.txt and
 // sp500_1925_1945.txt. Does the timing make sense?
 
-// P2A2. 
-//For sbux_2007_2016.txt, Starbucks was affected by the 2008 financial crisis and this event
+// Part 2 A2.
+// For sbux_2007_2016.txt, Starbucks was affected by the 2008 financial crisis and this event
 // aligns
 //  with when Starbucks had its lowest price of $4.09 in November 2008. For sp500_1925_1945.txt, the
 //  stock market crash in 1929 (Beginning of the Great Depression) affected S&P 500. This aligns
 //  with S&P 500's lowest price of $31.30 in the month of September 1929.
 
-//Step D Explain your own strategy
-// Before 12 months of data: do nothing. The strategy judges the trend by comparing today’s price to the average of the last 12 months. With less history than that, the average isn’t meaningful, so it waits. When you don’t own shares, buy only if two things are true:
-//Today’s price is above the 12-month average. That suggests the stock is in an uptrend rather than a slump.
-//Today’s price is higher than last month’s. That suggests the stock is still moving up right now, not just sitting above the average while falling back toward it.
-//When you own shares, sell if any of these happens:
-//The price falls to 8% below what you paid. This is a stop-loss. It caps how much a bad purchase can hurt you.
-//The price rises to 25% above what you paid. This locks in a big gain before it can evaporate.
-//The price drops below the 12-month average. The uptrend that justified buying has ended.
-//Prices often keep moving in the direction they’ve been going, at least for a while. So buying only during an uptrend and leaving when the trend breaks tries to catch the middle of a rise. The momentum check (rule 2 for buying) is there because the plain moving-average strategy buys the moment the price crosses the average, which can be a brief blip that reverses right away. The stop-loss exists because the average is slow to react, and a sharp one-month crash could cost a lot before the price falls below it.
+// Step D Explain your own strategy
+//  Before 12 months of data: do nothing. The strategy judges the trend by comparing today’s price
+//  to the average of the last 12 months. With less history than that, the average isn’t meaningful,
+//  so it waits. When I don’t own shares, buy only if two things are true:
+// 1, Today’s price is above the 12-month average. That suggests the stock is in an uptrend rather
+// than a slump. 2, Today’s price is higher than last month’s. That suggests the stock is still
+// moving up right now, not just sitting above the average while falling back toward it. When I own
+// shares, sell if any of these happens: 1, The price falls to 8% below what I paid. It caps how
+// much a bad purchase can hurt me. The price rises to 25% above what I paid. This locks in a big
+// gain before it can evaporate. The price drops below the 12-month average. The uptrend that
+// justified buying has ended. Prices often keep moving in the direction they’ve been going, at
+// least for a while. So buying only during an uptrend and leaving when the trend breaks tries to
+// catch the middle of a rise. The check (rule 2 for buying) is there because the
+// movingAverage strategy buys the moment the price crosses the average, which can be a brief blip
+// that reverses right away. The stop-loss exists because the average is slow to react, and a sharp
+// one-month crash could cost a lot before the price falls below it.
+
+// Step E Q1.
+//
+
+// Step E Q2.
+//
+
+// Step E Q3.
+//
+
+// Step E Q4.
+//
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,36 +54,52 @@ import java.util.Scanner;
 
 public class StockTrader {
     public static void main(String[] args) throws FileNotFoundException {
-        String file = "Rising.txt";
-        String fileTicker = "RISE";
-        Scanner in = new Scanner(new File(file));
+        System.out.println("Input file name that you wish to analyze and simulate trading on.");
+        System.out.println("Input \"end\" when you wish to end simulations.");
+        String strat = "myStrategy";
+        System.out.println("Current strategy: " + strat);
+        for (;;) {
+            Scanner s = new Scanner(System.in);
+            String file = s.nextLine();
+            if (file.equals("end")) {
+                break;
+            }
+            Scanner in = new Scanner(new File(file + ".txt"));
+            String fileTicker = "RISE";
+            String symbol = in.next();
+            int n = in.nextInt();
+            int[] years = new int[n];
+            int[] months = new int[n];
+            double[] prices = new double[n];
 
-        String symbol = in.next();
-        int n = in.nextInt();
-        int[] years = new int[n];
-        int[] months = new int[n];
-        double[] prices = new double[n];
+            loadData(in, years, months, prices);
+            printData(years, months, prices);
 
-        loadData(in, years, months, prices);
-        printData(years, months, prices);
+            System.out.println();
+            System.out.println("//==========DATA==========\\\\");
+            System.out.println(fileTicker + " lowest: $" + prices[indexOfLowest(prices)] + " in "
+                + monthName(months[indexOfLowest(prices)]) + " " + years[indexOfLowest(prices)]);
 
-		System.out.println();
-		System.out.println("//==========DATA==========\\\\");
-        System.out.println(fileTicker + " lowest: $" + prices[indexOfLowest(prices)] + " in "
-            + monthName(months[indexOfLowest(prices)]) + " " + years[indexOfLowest(prices)]);
+            System.out.println(fileTicker + " highest: $" + prices[indexOfHighest(prices)] + " in "
+                + monthName(months[indexOfHighest(prices)]) + " " + years[indexOfHighest(prices)]);
 
-        System.out.println(fileTicker + " highest: $" + prices[indexOfHighest(prices)] + " in "
-            + monthName(months[indexOfHighest(prices)]) + " " + years[indexOfHighest(prices)]);
+            System.out.println("Biggest Drop on: " + years[indexOfBiggestDrop(prices)] + " "
+                + months[indexOfBiggestDrop(prices)] + " at ");
+            System.out.println();
+            System.out.println();
 
-        System.out.println("Biggest Drop on: " + years[indexOfBiggestDrop(prices)] + " "
-            + months[indexOfBiggestDrop(prices)] + " at ");
-	
-		System.out.println();
-	
-		System.out.println("//==========TRADE==========\\\\");
-        double result = simulate(years, months, prices);
-        System.out.printf("Final value: $%,.2f%n", result);
+            System.out.println("//==========TRADE==========\\\\");
+            double result = simulate(years, months, prices);
+            System.out.println();
+            System.out.println("Strategy employed: " + strat);
+            System.out.printf("Final value: $%,.2f%n", result);
+            System.out.println();
+            System.out.println();
+            System.out.println();
+        }
     }
+
+    //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     public static void loadData(Scanner in, int[] years, int[] months, double[] prices) {
         for (int i = 0; i < years.length; i++) {
@@ -124,6 +159,8 @@ public class StockTrader {
         }
         return bigDropArrayIndex;
     }
+
+    //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     public static final double START_CASH = 10000.0;
     public static final double FEE = 10.0;
@@ -208,8 +245,7 @@ public class StockTrader {
         }
         return "";
     }
-    
-         
+
     public static String myStrategy(double[] history, boolean holding, double boughtAt) {
         if (history.length < 12) {
             return "";
@@ -233,15 +269,10 @@ public class StockTrader {
             }
             return "";
         }
- 
-        if (today > average && today > lastMonth) {
-				return "BUY";
-			}
-			return "";
-		}
-    }
-    
-    
-    
-    
 
+        if (today > average && today > lastMonth) {
+            return "BUY";
+        }
+        return "";
+    }
+}
