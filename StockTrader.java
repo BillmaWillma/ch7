@@ -1,3 +1,33 @@
+// P2Q1
+//For msft_2000_2010.txt, the highest price comes before the lowest price. What does that
+// mean for
+//  someone who bought Microsoft stock in 2000?
+
+// P2A1
+//It is very possible for someone to purchase a share of Microsoft in 2000 and lose money
+// because the same share of Microft depreciated in value over time.
+
+// P2Q2.
+// Look up what happened in the world around the lowest month for sbux_2007_2016.txt and
+// sp500_1925_1945.txt. Does the timing make sense?
+
+// P2A2. 
+//For sbux_2007_2016.txt, Starbucks was affected by the 2008 financial crisis and this event
+// aligns
+//  with when Starbucks had its lowest price of $4.09 in November 2008. For sp500_1925_1945.txt, the
+//  stock market crash in 1929 (Beginning of the Great Depression) affected S&P 500. This aligns
+//  with S&P 500's lowest price of $31.30 in the month of September 1929.
+
+//Step D Explain your own strategy
+// Before 12 months of data: do nothing. The strategy judges the trend by comparing today’s price to the average of the last 12 months. With less history than that, the average isn’t meaningful, so it waits. When you don’t own shares, buy only if two things are true:
+//Today’s price is above the 12-month average. That suggests the stock is in an uptrend rather than a slump.
+//Today’s price is higher than last month’s. That suggests the stock is still moving up right now, not just sitting above the average while falling back toward it.
+//When you own shares, sell if any of these happens:
+//The price falls to 8% below what you paid. This is a stop-loss. It caps how much a bad purchase can hurt you.
+//The price rises to 25% above what you paid. This locks in a big gain before it can evaporate.
+//The price drops below the 12-month average. The uptrend that justified buying has ended.
+//Prices often keep moving in the direction they’ve been going, at least for a while. So buying only during an uptrend and leaving when the trend breaks tries to catch the middle of a rise. The momentum check (rule 2 for buying) is there because the plain moving-average strategy buys the moment the price crosses the average, which can be a brief blip that reverses right away. The stop-loss exists because the average is slow to react, and a sharp one-month crash could cost a lot before the price falls below it.
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
@@ -5,8 +35,8 @@ import java.util.Scanner;
 
 public class StockTrader {
     public static void main(String[] args) throws FileNotFoundException {
-        String file = "tiny.txt";
-        String fileTicker = "TINY";
+        String file = "Rising.txt";
+        String fileTicker = "RISE";
         Scanner in = new Scanner(new File(file));
 
         String symbol = in.next();
@@ -18,6 +48,8 @@ public class StockTrader {
         loadData(in, years, months, prices);
         printData(years, months, prices);
 
+		System.out.println();
+		System.out.println("//==========DATA==========\\\\");
         System.out.println(fileTicker + " lowest: $" + prices[indexOfLowest(prices)] + " in "
             + monthName(months[indexOfLowest(prices)]) + " " + years[indexOfLowest(prices)]);
 
@@ -26,7 +58,10 @@ public class StockTrader {
 
         System.out.println("Biggest Drop on: " + years[indexOfBiggestDrop(prices)] + " "
             + months[indexOfBiggestDrop(prices)] + " at ");
-
+	
+		System.out.println();
+	
+		System.out.println("//==========TRADE==========\\\\");
         double result = simulate(years, months, prices);
         System.out.printf("Final value: $%,.2f%n", result);
     }
@@ -123,7 +158,7 @@ public class StockTrader {
     }
 
     public static String decide(double[] history, boolean holding, double boughtAt) {
-        return movingAverage(history, holding, boughtAt);
+        return myStrategy(history, holding, boughtAt);
     }
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -157,25 +192,56 @@ public class StockTrader {
 
     public static String movingAverage(double[] history, boolean holding, double boughtAt) {
         if (history.length < 12) {
-            return "HOLD";
+            return "";
         }
-
         double sum = 0.0;
         for (int i = history.length - 12; i < history.length; i++) {
             sum += history[i];
         }
         double average = sum / 12.0;
-
         double currentPrice = history[history.length - 1];
-
         if (!holding && currentPrice > average) {
             return "BUY";
         }
-
         if (holding && currentPrice < average) {
             return "SELL";
         }
-
-        return "HOLD";
+        return "";
     }
-}
+    
+         
+    public static String myStrategy(double[] history, boolean holding, double boughtAt) {
+        if (history.length < 12) {
+            return "";
+        }
+        double sum = 0;
+        for (int i = history.length - 12; i < history.length; i++) {
+            sum += history[i];
+        }
+        double average = sum / 12;
+        double today = history[history.length - 1];
+        double lastMonth = history[history.length - 2];
+        if (holding) {
+            if (today <= boughtAt * 0.92) {
+                return "SELL";
+            }
+            if (today >= boughtAt * 1.25) {
+                return "SELL";
+            }
+            if (today < average) {
+                return "SELL";
+            }
+            return "";
+        }
+ 
+        if (today > average && today > lastMonth) {
+				return "BUY";
+			}
+			return "";
+		}
+    }
+    
+    
+    
+    
+
