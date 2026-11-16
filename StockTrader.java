@@ -3,7 +3,7 @@
 // mean for
 //  someone who bought Microsoft stock in 2000?
 
-// Part 2 A1
+//h6787678 Part 2 A1
 // It is very possible for someone to purchase a share of Microsoft in 2000 and lose money
 // because the same share of Microft depreciated in value over time.
 
@@ -19,10 +19,9 @@
 //  with S&P 500's lowest price of $31.30 in the month of September 1929.
 
 // Step D Explain your own strategy
-//  Before 12 months of data: do nothing. The strategy judges the trend by comparing today’s price
-//  to the average of the last 12 months. With less history than that, the average isn’t meaningful,
-//  so it waits. When I don’t own shares, buy only if two things are true:
-// 1, Today’s price is above the 12-month average. That suggests the stock is in an uptrend rather
+// My strategy judges the trend by comparing today’s price to the average of the last 12 months. With less history than that, the average isn’t meaningful,
+//  so it waits (i.e. do nothing before 12 months of data). When I don’t own shares, buy only if two
+//  things are true: 1, Today’s price is above the 12-month average. That suggests the stock is in an uptrend rather
 // than a slump. 2, Today’s price is higher than last month’s. That suggests the stock is still
 // moving up right now, not just sitting above the average while falling back toward it. When I own
 // shares, sell if any of these happens: 1, The price falls to 8% below what I paid. It caps how
